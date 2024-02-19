@@ -14,7 +14,6 @@ class StockTwitsParser(Parser):
                     df = self.create_df(file_path)
                     df["ticker"] = file.split("_")[0]
                     df["source"] = "Twitter"
-                    df["body"] = df["body"].apply(html.unescape)
                     self.append_df(df)
             if ticker == "":
                 print("Starting...")
