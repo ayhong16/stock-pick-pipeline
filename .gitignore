@@ -2,3 +2,4 @@
 .venv
 /pipeline/data
 /pipeline/output
+*/.env

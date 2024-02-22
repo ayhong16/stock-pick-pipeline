@@ -1,7 +1,30 @@
 from parsers.stock_twits_parser import StockTwitsParser
+from pipeline.parsers.combine_data_parser import CombineDataParser
+from pipeline.parsers.news_headlines_parser import NewsHeadlinesParser
+from scrapers.alphavantage_scraper import AlphaVantageScraper
+import os
+from dotenv import load_dotenv
+from scrapers.benzinga_scraper import BenzingaScraper
+
 
 if __name__ == '__main__':
-    columns = ["created_at", "body", "ticker", "source"]
-    parser = StockTwitsParser(columns)
-    parser.parse()
+    load_dotenv()
+    ### StockTwitsParser
+    # columns = ["created_at", "body", "ticker", "source"]
+    # parser = StockTwitsParser(columns, ticker="NVDA", src="./data/StockTwits/NVDA_pre_processed.csv", dest="./output/nvda_stocktwits.csv")
+    # parser.parse()
 
+    # scraper = AlphaVantageScraper()
+    # scraper.scrape_stocks("NVDA", "2018-01-01", "2020-01-01")
+
+    # scraper = BenzingaScraper()
+    # scraper.scrape_news("AAPL", "2021-01-01", "2021-01-10")
+
+    # analyst_parser = NewsHeadlinesParser(["date", "title", "stock", "source"], src="./data/News_Headlines/analyst_ratings_processed.csv", dest="./output/nvda_news_headlines.csv", ticker="NVDA")
+    # analyst_parser.parse()
+    #
+    # headline_parser = NewsHeadlinesParser(["date", "headline", "stock", "source"], src="./data/News_Headlines/raw_partner_headlines.csv", dest="./output/nvda_news_headlines.csv", ticker="NVDA")
+    # headline_parser.parse()
+
+    combine_parser = CombineDataParser(ticker="NVDA", src="./data/precombined", dest="./output", start_date="2018-01-01", end_date="2019-01-10")
+    combine_parser.parse()
