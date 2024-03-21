@@ -17,11 +17,11 @@ if __name__ == '__main__':
     # scraper = AlphaVantageScraper()
     # scraper.scrape_stocks("NVDA", "2010-01-01", "2020-01-01")
 
-    # analyst_parser = NewsHeadlinesParser(["date", "title", "stock", "source"], src="./data/News_Headlines/analyst_ratings_processed.csv", dest="./output/nvda_news_headlines2.csv", ticker="NVDA")
-    # analyst_parser.parse()
-    #
-    # headline_parser = NewsHeadlinesParser(["date", "headline", "stock", "source"], src="./data/News_Headlines/raw_partner_headlines.csv", dest="./output/nvda_news_headlines2.csv", ticker="NVDA")
-    # headline_parser.parse()
+    # scraper = BenzingaScraper()
+    # scraper.scrape_news("AAPL", "2021-01-01", "2021-01-10")
+
+    analyst_parser = NewsHeadlinesParser(["date", "title", "stock", "source"], src="./data/News_Headlines/analyst_ratings_processed.csv", dest="./output/nvda_news_headlines.csv", ticker="NVDA")
+    analyst_parser.parse()
 
     # combine_parser = CombineDataParser(ticker="NVDA", src="./data/precombined", dest="./output", start_date="2014-01-01", end_date="2020-01-01")
     # combine_parser.parse()
