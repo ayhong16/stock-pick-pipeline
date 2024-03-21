@@ -41,11 +41,7 @@ class CombineDataParser(Parser):
 
         # Group by date and calculate sentiment scores
         social_media_sentiment_grouped = stocktwits_df.groupby('date')
-        # .apply(self.calculate_sentiment_score).reset_index(
-        #     name='social_media_sentiment')
         news_sentiment_grouped = news_df.groupby('date')
-        # .apply(self.calculate_sentiment_score).reset_index(
-        #     name='news_sentiment')
         social_media_sentiment = social_media_sentiment_grouped.apply(self.calculate_sentiment_score).reset_index(
             name='social_media_sentiment')
         news_sentiment = news_sentiment_grouped.apply(self.calculate_sentiment_score).reset_index(

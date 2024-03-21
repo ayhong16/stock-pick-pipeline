@@ -17,7 +17,7 @@ class Parser:
             self.end_date = pd.to_datetime(end_date, format="%Y-%m-%d")
 
     def create_df(self, csv):
-        df_src = pd.read_csv(csv)
+        df_src = pd.read_csv(csv, encoding='utf-8')
         return df_src
 
     def append_df(self, df_src):

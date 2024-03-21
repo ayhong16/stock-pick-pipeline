@@ -17,6 +17,7 @@ def convert_date_format(input_date):
     except ValueError:
         print("Invalid date format. Please provide a date in the format YYYY-MM-DD.")
 
+
 class AlphaVantageScraper:
     def __init__(self, dest="./output/"):
         self.dest = dest
