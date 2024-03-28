@@ -1,6 +1,9 @@
-from pipeline.parsers.parser import Parser
-import pandas as pd
 import numpy as np
+import pandas as pd
+from sklearn.impute import KNNImputer
+from sklearn.preprocessing import StandardScaler
+
+from pipeline.parsers.parser import Parser
 
 
 def calculate_sentiment_score(df, bi=False, col_name='labels'):
@@ -16,6 +19,35 @@ def calculate_sentiment_score(df, bi=False, col_name='labels'):
     else:
         sentiment_score = (positive_count - negative_count) / (positive_count + negative_count + neutral_count)
     return sentiment_score
+
+
+def knn_imputer(df):
+    df_imputation = df.copy()
+    cols = df_imputation.columns.tolist()
+    cols.remove('date')
+
+    df_imputation["date"] = df_imputation["date"].apply(lambda x: x.timestamp())
+    df_imputation["date"] = df_imputation["volume"].astype('float64')
+    missing_rows = df_imputation['news_sentiment'] == 0
+    df_imputation['news_sentiment'] = df_imputation['news_sentiment'].replace(0, np.nan)
+
+    # Normalize features in the copy for imputation
+    scaler = StandardScaler()
+    df_imputation_scaled = scaler.fit_transform(df_imputation)
+
+    # Apply KNN imputation to the scaled data
+    knn = KNNImputer(n_neighbors=5)
+    df_imputation_scaled = knn.fit_transform(df_imputation_scaled)
+
+    # Convert back to DataFrame
+    df_imputation_unscaled = scaler.inverse_transform(df_imputation_scaled)
+    df_imputation_unscaled = pd.DataFrame(df_imputation_unscaled, columns=df_imputation.columns)
+
+    # Update the original dataframe with the imputed and scaled values for missing rows only
+    df['news_sentiment'] = df_imputation_unscaled['news_sentiment']
+    return df
+
+
 
 
 class CombineDataParser(Parser):
@@ -58,12 +90,14 @@ class CombineDataParser(Parser):
         raw_social_media_sentiment = raw_social_media_sentiment.reset_index(name="raw_social_media_sentiment")
         thresh_social_media_sentiment = social_media_sentiment_group.apply(
             lambda df: calculate_sentiment_score(df, bi=False, col_name="thresholded label"))
-        thresh_social_media_sentiment = thresh_social_media_sentiment.reset_index(name='thresholded_social_media_sentiment')
+        thresh_social_media_sentiment = thresh_social_media_sentiment.reset_index(
+            name='thresholded_social_media_sentiment')
         news_sentiment = news_sentiment_group.apply(lambda df: calculate_sentiment_score(df, bi=False, col_name="label")
                                                     ).reset_index(name='news_sentiment')
         # Merge dataframes on date
         result_df = pd.merge(raw_social_media_sentiment, news_sentiment, on='date', how='outer').fillna(0)
         result_df = pd.merge(result_df, thresh_social_media_sentiment, on='date', how='outer').fillna(0)
         result_df = pd.merge(result_df, stock_df, on='date', how='inner').fillna(0)
-        result_df.to_csv(f"{self.dest}/{self.ticker}_combined_data.csv", index=False)
+        result_df = knn_imputer(result_df)
+        result_df.to_csv(f"{self.dest}/{self.ticker}_combined_imputed_data.csv", index=False)
         print(f"Finished CombineDataParser for {self.ticker}!")
