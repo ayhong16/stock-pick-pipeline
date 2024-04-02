@@ -28,8 +28,6 @@ def knn_imputer(df):
 
     df_imputation["date"] = df_imputation["date"].apply(lambda x: x.timestamp())
     df_imputation["date"] = df_imputation["volume"].astype('float64')
-    missing_rows = df_imputation['news_sentiment'] == 0
-    df_imputation['news_sentiment'] = df_imputation['news_sentiment'].replace(0, np.nan)
 
     # Normalize features in the copy for imputation
     scaler = StandardScaler()
@@ -43,8 +41,10 @@ def knn_imputer(df):
     df_imputation_unscaled = scaler.inverse_transform(df_imputation_scaled)
     df_imputation_unscaled = pd.DataFrame(df_imputation_unscaled, columns=df_imputation.columns)
 
-    # Update the original dataframe with the imputed and scaled values for missing rows only
+    # Update the original dataframe with the imputed values
     df['news_sentiment'] = df_imputation_unscaled['news_sentiment']
+    df['raw_social_media_sentiment'] = df_imputation_unscaled['raw_social_media_sentiment']
+    df['thresholded_social_media_sentiment'] = df_imputation_unscaled['thresholded_social_media_sentiment']
     return df
 
 
@@ -95,9 +95,9 @@ class CombineDataParser(Parser):
         news_sentiment = news_sentiment_group.apply(lambda df: calculate_sentiment_score(df, bi=False, col_name="label")
                                                     ).reset_index(name='news_sentiment')
         # Merge dataframes on date
-        result_df = pd.merge(raw_social_media_sentiment, news_sentiment, on='date', how='outer').fillna(0)
-        result_df = pd.merge(result_df, thresh_social_media_sentiment, on='date', how='outer').fillna(0)
-        result_df = pd.merge(result_df, stock_df, on='date', how='inner').fillna(0)
+        result_df = pd.merge(raw_social_media_sentiment, news_sentiment, on='date', how='outer')
+        result_df = pd.merge(result_df, thresh_social_media_sentiment, on='date', how='outer')
+        result_df = pd.merge(result_df, stock_df, on='date', how='inner')
         result_df = knn_imputer(result_df)
         result_df.to_csv(f"{self.dest}/{self.ticker}_combined_imputed_data.csv", index=False)
         print(f"Finished CombineDataParser for {self.ticker}!")
