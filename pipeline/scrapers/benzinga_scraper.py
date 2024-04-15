@@ -1,8 +1,7 @@
-import requests
 import os
-import pandas as pd
-import io
 from datetime import datetime
+
+import requests
 
 
 def convert_date_format(input_date):

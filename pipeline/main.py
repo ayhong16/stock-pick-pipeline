@@ -11,20 +11,20 @@ if __name__ == '__main__':
     load_dotenv()
     ### StockTwitsParser
     # columns = ["created_at", "body_prepared", "ticker", "source", "sentiment"]
-    # parser = StockTwitsParser(columns, ticker="NVDA", src="./data/StockTwits/NVDA_pre_processed.csv", dest="./output/nvda_stocktwits_final.csv")
+    # parser = StockTwitsParser(columns, ticker="AAPL", src="./data/StockTwits/AAPL_pre_processed.csv", dest="./output/AAPL/aapl_stocktwits_final.csv")
     # parser.parse()
 
     # scraper = AlphaVantageScraper()
-    # scraper.scrape_stocks("NVDA", "2010-01-01", "2020-01-01")
+    # scraper.scrape_stocks("NVDA", "2019-12-31", "2022-02-27")
 
     # scraper = BenzingaScraper()
-    # scraper.scrape_news("AAPL", "2021-01-01", "2021-01-10")
+    # scraper.scrape_news("AAPL", "2019-12-31", "2022-02-27")
 
-    # analyst_parser = NewsHeadlinesParser(["date", "title", "stock", "source"], src="./data/News_Headlines/analyst_ratings_processed.csv", dest="./output/nvda_news_headlines.csv", ticker="NVDA")
+    # analyst_parser = NewsHeadlinesParser(["date", "title", "stock", "source"], src="./data/News_Headlines/analyst_ratings_processed.csv", dest="./output/aapl_news_headlines.csv", ticker="AAPL")
     # analyst_parser.parse()
 
-    combine_parser = CombineDataParser(ticker="NVDA", src="./data/precombined", dest="./output",
-                                       start_date="2014-01-01", end_date="2020-01-01")
-    combine_parser.parse()
+    # combine_parser = CombineDataParser(ticker="NVDA", src="./data/precombined", dest="./output",
+    #                                    start_date="2014-01-01", end_date="2020-01-01")
+    # combine_parser.parse()
 
 
