@@ -22,7 +22,7 @@ class Parser:
 
     def append_df(self, df_src):
         df_selected_columns = df_src[self.columns]
-        df_selected_columns.to_csv(self.dest, index=False, mode='a', header=not os.path.exists(self.dest))
+        df_selected_columns.to_csv(self.dest, index=False)
 
     def parse(self):
         pass

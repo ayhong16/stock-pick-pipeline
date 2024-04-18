@@ -13,5 +13,7 @@ class NewsHeadlinesParser(Parser):
         df = self.create_df(file_path)
         df = df[df["stock"] == self.ticker]
         df["source"] = "Benzinga"
+        print("Dates " + str(min(df["date"])) + " to " + str(max(df["date"])))
+        print(f"{len(df)} mentions")
         self.append_df(df)
         print(f"Finished NewsHeadlinesParser for {self.ticker}!")

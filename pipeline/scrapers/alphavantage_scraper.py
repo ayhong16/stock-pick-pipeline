@@ -19,7 +19,7 @@ def convert_date_format(input_date):
 
 
 class AlphaVantageScraper:
-    def __init__(self, dest="./output/"):
+    def __init__(self, dest="./data/precombined/"):
         self.dest = dest
         self.url = "https://www.alphavantage.co/query?"
 
@@ -31,7 +31,7 @@ class AlphaVantageScraper:
             data = pd.read_csv(io.StringIO(r.text))
             data['date'] = pd.to_datetime(data['timestamp'])
             filtered_data = data[(data['timestamp'] >= start_date) & (data['timestamp'] <= end_date)]
-            filtered_data.to_csv(f"{self.dest}{ticker}_stock_data.csv", index=False)
+            filtered_data.to_csv(f"{self.dest}/{ticker}/stock_data.csv", index=False)
             print(f"Download {ticker} stock data!")
         else:
             print(f"Failed to download {ticker} stock data...")

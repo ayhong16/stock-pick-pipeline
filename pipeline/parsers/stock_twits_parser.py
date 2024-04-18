@@ -26,7 +26,7 @@ class StockTwitsParser(Parser):
         df["source"] = "Twitter"
         df["sentiment"] = df["sentiment"].apply(lambda x: "neutral" if pd.isna(x) or x == "" else ("negative" if x.lower() == "bearish" else "positive"))
         df["body_prepared"] = df["body_prepared"].apply(lambda x: replace_html_entities(x))
-        print("Dates " + str(min(df["created_at"])) + "to " + str(max(df["created_at"])))
+        print("Dates " + str(min(df["created_at"])) + " to " + str(max(df["created_at"])))
         print(f"{len(df)} mentions")
         self.append_df(df)
         print(f"Finished StockTwitsParser for {self.ticker}!")
