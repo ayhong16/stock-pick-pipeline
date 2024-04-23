@@ -99,5 +99,5 @@ class CombineDataParser(Parser):
         result_df = pd.merge(result_df, thresh_social_media_sentiment, on='date', how='outer')
         result_df = pd.merge(result_df, stock_df, on='date', how='inner')
         result_df = knn_imputer(result_df)
-        result_df.to_csv(f"{self.dest}/{self.ticker}_combined_imputed_data.csv", index=False)
+        result_df.to_csv(f"{self.dest}/{self.ticker}/{self.ticker}_combined_imputed_data.csv", index=False)
         print(f"Finished CombineDataParser for {self.ticker}!")
