@@ -48,8 +48,6 @@ def knn_imputer(df):
     return df
 
 
-
-
 class CombineDataParser(Parser):
 
     def parse(self):
@@ -57,30 +55,23 @@ class CombineDataParser(Parser):
         stocktwits_file = f'{self.src}/{self.ticker}/stocktwits_sentiment.csv'
         news_file = f'{self.src}/{self.ticker}/news_sentiment.csv'
         stock_file = f'{self.src}/{self.ticker}/stock_data.csv'
+        indicators_file = f'{self.src}/{self.ticker}/indicators.csv'
 
         # Read CSV files into pandas DataFrames
         stocktwits_df = pd.read_csv(stocktwits_file, lineterminator='\n')
         news_df = pd.read_csv(news_file)
         stock_df = pd.read_csv(stock_file)
+        indicators_df = pd.read_csv(indicators_file)
         stock_df.drop('timestamp', axis=1, inplace=True)
 
         # Standardize column names
         stocktwits_df.rename(columns={'created_at': 'date'}, inplace=True)
         stock_df.rename(columns={'timestamp': 'date'}, inplace=True)
 
-        # Convert 'date' column to datetime format
-        stocktwits_df['date'] = pd.to_datetime(stocktwits_df['date'], utc=True)
-        stocktwits_df['date'] = pd.to_datetime(stocktwits_df['date'].dt.strftime('%Y-%m-%d'))
-        news_df['date'] = pd.to_datetime(news_df['date'], utc=True)
-        news_df['date'] = pd.to_datetime(news_df['date'].dt.strftime('%Y-%m-%d'))
-        stock_df['date'] = pd.to_datetime(stock_df['date'], utc=True)
-        stock_df['date'] = pd.to_datetime(stock_df['date'].dt.strftime('%Y-%m-%d'))
-
-        # Filter data based on start and end dates
-        stocktwits_df = stocktwits_df[
-            (stocktwits_df['date'] >= self.start_date) & (stocktwits_df['date'] <= self.end_date)]
-        news_df = news_df[(news_df['date'] >= self.start_date) & (news_df['date'] <= self.end_date)]
-        stock_df = stock_df[(stock_df['date'] >= self.start_date) & (stock_df['date'] <= self.end_date)]
+        stocktwits_df = self._organize_df(stocktwits_df)
+        news_df = self._organize_df(news_df)
+        stock_df = self._organize_df(stock_df)
+        indicators_df = self._organize_df(indicators_df)
 
         # Group by date and calculate sentiment scores
         social_media_sentiment_group = stocktwits_df.groupby('date')
@@ -98,6 +89,16 @@ class CombineDataParser(Parser):
         result_df = pd.merge(raw_social_media_sentiment, news_sentiment, on='date', how='outer')
         result_df = pd.merge(result_df, thresh_social_media_sentiment, on='date', how='outer')
         result_df = pd.merge(result_df, stock_df, on='date', how='inner')
+        result_df = pd.merge(result_df, indicators_df, on='date', how='inner')
         result_df = knn_imputer(result_df)
         result_df.to_csv(f"{self.dest}/{self.ticker}/{self.ticker}_combined_imputed_data.csv", index=False)
         print(f"Finished CombineDataParser for {self.ticker}!")
+
+    def _organize_df(self, df):
+        # Convert 'date' column to datetime format
+        df['date'] = pd.to_datetime(df['date'], utc=True)
+        df['date'] = pd.to_datetime(df['date'].dt.strftime('%Y-%m-%d'))
+
+        # Filter data based on start and end dates
+        df = df[(df['date'] >= self.start_date) & (df['date'] <= self.end_date)]
+        return df
