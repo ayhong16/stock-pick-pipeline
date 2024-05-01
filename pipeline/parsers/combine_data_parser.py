@@ -67,6 +67,8 @@ class CombineDataParser(Parser):
         # Standardize column names
         stocktwits_df.rename(columns={'created_at': 'date'}, inplace=True)
         stock_df.rename(columns={'timestamp': 'date'}, inplace=True)
+        self.start_date = min(stocktwits_df['date'])
+        self.end_date = max(stocktwits_df['date'])
 
         stocktwits_df = self._organize_df(stocktwits_df)
         news_df = self._organize_df(news_df)

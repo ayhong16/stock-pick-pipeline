@@ -25,8 +25,7 @@ if __name__ == '__main__':
     # analyst_parser = NewsHeadlinesParser(["date", "title", "stock", "source"], src="./data/News_Headlines/analyst_ratings_processed.csv", dest="./output/TSLA/tsla_news_headlines.csv", ticker="TSLA")
     # analyst_parser.parse()
 
-    combine_parser = CombineDataParser(ticker="AAPL", src="./data/precombined", dest=f"./output",
-                                       start_date="2019-12-31", end_date="2022-02-27")
+    combine_parser = CombineDataParser(ticker="TSLA", src="./data/precombined", dest=f"./output")
     combine_parser.parse()
 
 
